@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   Alert,
   FlatList,
@@ -10,53 +11,35 @@ import { Participant } from '../../components/Participant'
 import { styles } from './styles'
 
 export function Home() {
-  const participants = [
-    'Ana',
-    'Pedro',
-    'Maria',
-    'João',
-    'Carlos',
-    'Fernanda',
-    'Lucas',
-    'Camila',
-    'Rafael',
-    'Juliana',
-    'Gustavo',
-    'Carla',
-    'Paulo',
-    'Luciana',
-    'Felipe',
-    'Beatriz',
-    'Thiago',
-    'Larissa',
-    'Eduardo',
-    'Bruna',
-  ]
+  const [participants, setParticipans] = useState<string[]>([])
+  const [participantName, setParticipantName] = useState('')
 
   function handleAddParticipant() {
-    if (participants.includes('Felipe')) {
+    if (participants.includes(participantName)) {
       return Alert.alert(
         'Participante Existe',
         'Já existe um participante na lista com esse nome.'
       )
     }
 
-    console.log('Participant added!')
+    setParticipans((prevState) => [...prevState, participantName])
+    setParticipantName('')
   }
 
   function handleRemoveParticipant(name: string) {
     Alert.alert('Remover', `Remover o participante ${name}?`, [
       {
         text: 'Sim',
-        onPress: () => Alert.alert('Deletado!'),
+        onPress: () =>
+          setParticipans((prevState) =>
+            prevState.filter((participant) => participant !== name)
+          ),
       },
       {
         text: 'Não',
         style: 'cancel',
       },
     ])
-
-    console.log(`Você clicou em remover o participante ${name}`)
   }
 
   return (
@@ -66,11 +49,17 @@ export function Home() {
 
       <View style={styles.form}>
         <TextInput
+          onChangeText={setParticipantName}
           style={styles.input}
           placeholder="Nome do participante"
           placeholderTextColor="#6b6b6b"
+          value={participantName}
         />
-        <TouchableOpacity style={styles.button} onPress={handleAddParticipant}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleAddParticipant}
+          disabled={!participantName}
+        >
           <Text style={styles.buttonText}>+</Text>
         </TouchableOpacity>
       </View>
